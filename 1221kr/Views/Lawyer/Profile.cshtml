@@ -1,0 +1,175 @@
+﻿@model _1221kr.Models.ApplicationUser
+@{
+    ViewBag.Title = "Профиль юриста";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="lawyer-profile">
+    @if (!string.IsNullOrEmpty(Model.PhotoPath))
+    {
+        <img src="@Model.PhotoPath" class="profile-photo" alt="Фото профиля">
+    }
+
+    <h2>@Model.FirstName @Model.LastName</h2>
+
+    @if (!string.IsNullOrEmpty(Model.Specialization))
+    {
+        <p><strong>Специализация:</strong> @Model.Specialization</p>
+    }
+
+    <div class="button-group">
+        @Html.ActionLink("Редактировать профиль", "UpdateProfile", "Lawyer", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+<div style="margin: 30px 0; text-align: center;">
+    @Html.ActionLink("СОЗДАТЬ КОНСУЛЬТАЦИЮ", "Create", "Consultation", null, new { @class = "btn btn-danger", style = "padding: 12px 24px; font-weight: bold; font-size: 1.1em;" })
+</div>
+
+<div class="consultations-list">
+    <h3><i class="fas fa-list"></i> Мои консультации</h3>
+
+    @if (ViewBag.Consultations != null && ((IEnumerable<_1221kr.Models.Consultation>)ViewBag.Consultations).Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Тип</th>
+                        <th>Цена</th>
+                        <th>Длительность</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var consultation in (IEnumerable<_1221kr.Models.Consultation>)ViewBag.Consultations)
+                    {
+                        <tr>
+                            <td>@consultation.Title</td>
+                            <td>@consultation.Type</td>
+                            <td>@consultation.Price.ToString("N0") ₽</td>
+                            <td>@consultation.DurationMinutes мин</td>
+                            <td>
+                                <span class="badge @(consultation.IsActive ? "badge-success" : "badge-secondary")">
+                                    @(consultation.IsActive ? "Активна" : "Неактивна")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Действия
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        
+                                        <div class="dropdown-divider"></div>
+                                        <form method="post" action="@Url.Action("Delete", "Consultation", new { id = consultation.Id })" class="dropdown-item">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-link text-danger p-0"
+                                                    onclick="return confirm('Вы уверены, что хотите удалить эту консультацию?');">
+                                                <i class="fas fa-trash-alt"></i> Удалить
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            У вас пока нет созданных консультаций
+        </div>
+    }
+</div>
+
+<style>
+    .lawyer-profile {
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid #ddd;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        font-family: Arial, sans-serif;
+    }
+
+    .profile-photo {
+        max-width: 200px;
+        display: block;
+        margin: 0 auto 20px;
+        border-radius: 4px;
+    }
+
+    .button-group {
+        margin-top: 20px;
+    }
+
+    .btn-danger {
+        background-color: #b71c1c;
+        border-color: #b71c1c;
+    }
+
+        .btn-danger:hover {
+            background-color: #8e0000;
+            border-color: #8e0000;
+        }
+
+    .consultations-list {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+        .consultations-list h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+    .table {
+        margin-top: 20px;
+    }
+
+    .alert {
+        margin-top: 20px;
+    }
+
+    .dropdown-menu {
+        min-width: 10rem;
+    }
+
+    .dropdown-item {
+        padding: 0.25rem 1.5rem;
+    }
+
+    .badge {
+        font-size: 0.85em;
+        padding: 0.35em 0.65em;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Подтверждение удаления
+            $('.delete-btn').click(function (e) {
+                e.preventDefault();
+                if (confirm('Вы уверены, что хотите удалить эту консультацию?')) {
+                    window.location.href = $(this).data('url');
+                }
+            });
+
+            // Инициализация dropdown
+            $('.dropdown-toggle').dropdown();
+        });
+    </script>
+}

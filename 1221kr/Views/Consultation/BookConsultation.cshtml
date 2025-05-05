@@ -1,0 +1,33 @@
+﻿@model _1221kr.Models.ConsultationBooking
+@{
+    ViewBag.Title = "Запись на консультацию";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>Запись на консультацию</h2>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("BookConsultation", "Consultation", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ConsultationId)
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SelectedDate)
+                    @Html.TextBoxFor(m => m.SelectedDate, new { @class = "form-control", type = "datetime-local" })
+                    @Html.ValidationMessageFor(m => m.SelectedDate)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Notes)
+                    @Html.TextAreaFor(m => m.Notes, new { @class = "form-control" })
+                </div>
+
+                <button type="submit" class="btn btn-primary">Подтвердить запись</button>
+            }
+        </div>
+    </div>
+</div>

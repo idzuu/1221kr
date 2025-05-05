@@ -1,0 +1,50 @@
+﻿@model IEnumerable<_1221kr.Models.Consultation>
+@{
+    ViewBag.Title = "Все консультации";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2><i class="bi bi-list-ul"></i> Все доступные консультации</h2>
+
+    <div class="row mt-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4>@item.Title</h4>
+                        <p class="text-muted">
+                            <i class="bi bi-person"></i> @item.Lawyer.FirstName @item.Lawyer.LastName
+                        </p>
+                        <p>@(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">@item.Type</span>
+                            <span class="text-success fw-bold">@item.Price.ToString("N0") ₽</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="@Url.Action("Details", new { id = item.Id })"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> Подробнее
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            }
+    </style>
+}

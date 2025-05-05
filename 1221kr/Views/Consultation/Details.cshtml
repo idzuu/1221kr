@@ -1,0 +1,133 @@
+﻿@model _1221kr.Models.ConsultationDetailsViewModel
+@{
+    ViewBag.Title = "Детали консультации";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2>@Model.Consultation.Title</h2>
+                    <p class="text-muted">
+                        <i class="bi bi-person"></i> Юрист: @Model.Consultation.Lawyer.FirstName @Model.Consultation.Lawyer.LastName
+                    </p>
+
+                    <div class="mb-4">
+                        <h4>Описание:</h4>
+                        <p>@Model.Consultation.Description</p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-currency-exchange"></i> Стоимость</h5>
+                                    <p class="h4 text-success">@Model.Consultation.Price.ToString("N0") ₽</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-clock"></i> Длительность</h5>
+                                    <p class="h4">@Model.Consultation.DurationMinutes мин</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-collection"></i> Тип</h5>
+                                    <p class="h4">@Model.Consultation.Type</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4><i class="bi bi-calendar-plus"></i> Запись на консультацию</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("BookConsultation", "Consultation", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.BookingModel.ConsultationId)
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.BookingModel.SelectedDate, "Дата и время")
+                            @Html.TextBoxFor(model => model.BookingModel.SelectedDate,
+                                new { @class = "form-control", type = "datetime-local" })
+                            @Html.ValidationMessageFor(model => model.BookingModel.SelectedDate)
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.BookingModel.Notes, "Ваши комментарии")
+                            @Html.TextAreaFor(model => model.BookingModel.Notes,
+                                new { @class = "form-control", rows = 3 })
+                            @Html.ValidationMessageFor(model => model.BookingModel.Notes)
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-check-circle"></i> Записаться
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5><i class="bi bi-info-circle"></i> Контакты юриста</h5>
+                    <p>
+                        <i class="bi bi-envelope"></i> @Model.Consultation.Lawyer.Email<br>
+                        <i class="bi bi-telephone"></i> @Model.Consultation.Lawyer.PhoneNumber
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-weight: 500;
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Установка минимальной даты для записи (завтрашний день)
+        $(document).ready(function() {
+            var now = new Date();
+            now.setDate(now.getDate() + 1); // Минимум завтрашний день
+            var minDate = now.toISOString().slice(0, 16);
+
+            $('#BookingModel_SelectedDate').attr('min', minDate);
+
+            // Если тип консультации "Текстовая", скрываем выбор даты
+            @if(Model.Consultation.Type == _1221kr.Models.ConsultationType.Text)
+            {
+                <text>
+                $('#BookingModel_SelectedDate').closest('.form-group').hide();
+                </text>
+            }
+        });
+    </script>
+}
