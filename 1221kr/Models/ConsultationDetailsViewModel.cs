@@ -18,26 +18,19 @@ namespace _1221kr.Models
 
     public class ConsultationBooking
     {
+
         public int Id { get; set; }
-
-        [Required]
-        [ForeignKey("Consultation")]
         public int ConsultationId { get; set; }
-
-        // Навигационное свойство
-        public virtual Consultation Consultation { get; set; }
-
-        [Required]
+        public Consultation Consultation { get; set; }
         public string ClientId { get; set; }
-
-        [Required]
         public DateTime SelectedDate { get; set; }
-
         public string Notes { get; set; }
+        public DateTime BookingDate { get; set; }
+        public BookingStatus Status { get; set; }
+        public DateTime MinDate { get; set; }
+        public DateTime MaxDate { get; set; }
+        public List<DayOfWeek> AvailableDays { get; set; }
 
-        public DateTime BookingDate { get; set; } = DateTime.Now;
-
-        public BookingStatus Status { get; set; } = BookingStatus.Pending;
     }
 
     public enum BookingStatus

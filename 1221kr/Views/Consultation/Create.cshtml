@@ -13,88 +13,88 @@
 
     @using (Html.BeginForm("Create", "Consultation", FormMethod.Post, new { @class = "consultation-form" }))
     {
-    @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
-    <div class="form-section">
-        <h3><i class="fas fa-info-circle"></i> Основные параметры</h3>
+        <div class="form-section">
+            <h3><i class="fas fa-info-circle"></i> Основные параметры</h3>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title)
-            @Html.TextBoxFor(model => model.Title, new { @class = "form-control", placeholder = "Например: Консультация по семейному праву" })
-            @Html.ValidationMessageFor(model => model.Title)
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description)
-            @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = 4, placeholder = "Подробное описание консультации..." })
-            @Html.ValidationMessageFor(model => model.Description)
-        </div>
-
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                @Html.LabelFor(model => model.Price)
-                <div class="input-group">
-                    @Html.TextBoxFor(model => model.Price, new { @class = "form-control", type = "number", min = "0", step = "100" })
-                    <div class="input-group-append">
-                        <span class="input-group-text">₽</span>
-                    </div>
-                </div>
-                @Html.ValidationMessageFor(model => model.Price)
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title)
+                @Html.TextBoxFor(model => model.Title, new { @class = "form-control", placeholder = "Например: Консультация по семейному праву" })
+                @Html.ValidationMessageFor(model => model.Title)
             </div>
 
-            <div class="form-group col-md-6">
-                @Html.LabelFor(model => model.DurationMinutes)
-                <div class="input-group">
-                    @Html.TextBoxFor(model => model.DurationMinutes, new { @class = "form-control", type = "number", min = "15", max = "240" })
-                    <div class="input-group-append">
-                        <span class="input-group-text">мин</span>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description)
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = 4, placeholder = "Подробное описание консультации..." })
+                @Html.ValidationMessageFor(model => model.Description)
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(model => model.Price)
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.Price, new { @class = "form-control", type = "number", min = "0", step = "100" })
+                        <div class="input-group-append">
+                            <span class="input-group-text">₽</span>
+                        </div>
                     </div>
+                    @Html.ValidationMessageFor(model => model.Price)
                 </div>
-                @Html.ValidationMessageFor(model => model.DurationMinutes)
+
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(model => model.DurationMinutes)
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.DurationMinutes, new { @class = "form-control", type = "number", min = "15", max = "240" })
+                        <div class="input-group-append">
+                            <span class="input-group-text">мин</span>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DurationMinutes)
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="form-section">
-        <h3><i class="fas fa-calendar-alt"></i> Расписание</h3>
+        <div class="form-section">
+            <h3><i class="fas fa-calendar-alt"></i> Расписание</h3>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Type)
-            @Html.DropDownListFor(model => model.Type,
-    _1221kr.Helpers.EnumHelper.GetEnumSelectList<_1221kr.Models.ConsultationType>(),
-    "Выберите тип консультации",
-    new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Type)
-        </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Type)
+                @Html.DropDownListFor(model => model.Type,
+        _1221kr.Helpers.EnumHelper.GetEnumSelectList<_1221kr.Models.ConsultationType>(),
+        "Выберите тип консультации",
+        new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Type)
+            </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.DaysOfWeek, "Доступные дни")
-            <div class="days-checkbox-container">
-                @foreach (var day in Model.DaysOfWeek)
+            <div class="form-group">
+                @Html.LabelFor(model => model.DaysOfWeek, "Доступные дни")
+                <div class="days-checkbox-container">
+                    @foreach (var day in Model.DaysOfWeek)
                     {
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input day-checkbox" type="checkbox" id="@day.Value" value="@day.Value">
-                    <label class="form-check-label" for="@day.Value">@day.Text</label>
-                </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input day-checkbox" type="checkbox" id="@day.Value" value="@day.Value">
+                            <label class="form-check-label" for="@day.Value">@day.Text</label>
+                        </div>
                     }
+                </div>
+                @Html.HiddenFor(model => model.AvailableDaysJson)
             </div>
-            @Html.HiddenFor(model => model.AvailableDaysJson)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.WorkingHours, "Часы работы (например: 09:00-18:00)")
+                @Html.TextBoxFor(model => model.WorkingHours, new { @class = "form-control", placeholder = "09:00-18:00" })
+            </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.WorkingHours, "Часы работы (например: 09:00-18:00)")
-            @Html.TextBoxFor(model => model.WorkingHours, new { @class = "form-control", placeholder = "09:00-18:00" })
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save"></i> Создать консультацию
+            </button>
+            <a href="@Url.Action("Index", "Profile")" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-times"></i> Отмена
+            </a>
         </div>
-    </div>
-
-    <div class="form-actions">
-        <button type="submit" class="btn btn-primary btn-lg">
-            <i class="fas fa-save"></i> Создать консультацию
-        </button>
-        <a href="@Url.Action("Index", "Profile")" class="btn btn-outline-secondary btn-lg">
-            <i class="fas fa-times"></i> Отмена
-        </a>
-    </div>
     }
 </div>
 

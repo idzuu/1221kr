@@ -4,30 +4,93 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h2>Запись на консультацию</h2>
-        </div>
-        <div class="card-body">
-            @using (Html.BeginForm("BookConsultation", "Consultation", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Запись на консультацию</h3>
+                </div>
                 @Html.HiddenFor(m => m.ConsultationId)
+                <div class="card-body">
+                    @if (Model?.Consultation == null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            Консультация не найдена или недоступна для записи.
+                        </div>
+                        <a href="@Url.Action("Main", "Home")" class="btn btn-primary">
+                            Вернуться на главную
+                        </a>
+                    }
+                    else
+                    {
+                        <h4>@Model.Consultation.Title</h4>
+                        <p>@Model.Consultation.Description</p>
+                        <hr />
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.SelectedDate)
-                    @Html.TextBoxFor(m => m.SelectedDate, new { @class = "form-control", type = "datetime-local" })
-                    @Html.ValidationMessageFor(m => m.SelectedDate)
+                        using (Html.BeginForm("BookConsultation", "Consultation", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.ConsultationId)
+
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.SelectedDate, "Дата и время консультации")
+                                @Html.TextBoxFor(m => m.SelectedDate, new
+                                {
+                                    @class = "form-control datetimepicker",
+                                    type = "datetime-local",
+                                    min = Model.MinDate.ToString("yyyy-MM-ddTHH:mm"),
+                                    max = Model.MaxDate.ToString("yyyy-MM-ddTHH:mm"),
+                                    required = "required"
+                                })
+                                @Html.ValidationMessageFor(m => m.SelectedDate, "", new { @class = "text-danger" })
+                                <small class="form-text text-muted">
+                                    Доступное время: с 9:00 до 18:00
+                                </small>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Notes, "Дополнительная информация")
+                                @Html.TextAreaFor(m => m.Notes, new { @class = "form-control", rows = 3 })
+                                @Html.ValidationMessageFor(m => m.Notes, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                    Подтвердить запись
+                                </button>
+                                <a href="@Url.Action("Details", new { id = Model.ConsultationId })" class="btn btn-outline-secondary btn-block mt-2">
+                                    Назад к консультации
+                                </a>
+                            </div>
+                        }
+                    }
                 </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Notes)
-                    @Html.TextAreaFor(m => m.Notes, new { @class = "form-control" })
-                </div>
-
-                <button type="submit" class="btn btn-primary">Подтвердить запись</button>
-            }
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function() {
+            $('.datetimepicker').change(function() {
+                var selectedDate = new Date(this.value);
+                var day = selectedDate.getDay();
+
+                if (day === 0 || day === 6) {
+                    alert('Консультации доступны только с понедельника по пятницу');
+                    this.value = '';
+                }
+
+                // Дополнительная проверка времени (9:00-18:00)
+                var hours = selectedDate.getHours();
+                if (hours < 9 || hours >= 18) {
+                    alert('Консультации доступны только с 9:00 до 18:00');
+                    this.value = '';
+                }
+            });
+        });
+    </script>
+}

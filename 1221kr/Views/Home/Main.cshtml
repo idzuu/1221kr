@@ -22,10 +22,11 @@
 
         <div class="col-md-3 mb-4">
             <div class="card h-100">
-                <div class="card-body">
-                    <h3><i class="bi bi-files"></i> Документооборот</h3>
-                    <p>Безопасное хранение и обмен документами</p>
-                </div>
+                <a href="@Url.Action("Index", "File")" class="text-decoration-none">
+                    <div class="card-body">
+                        <h3><i class="bi bi-files"></i> Документооборот</h3>
+                        <p>Безопасное хранение и обмен документами</p>
+                    </div>
             </div>
         </div>
 
@@ -106,7 +107,7 @@
 @section Scripts {
     <script>
         // Инициализация tooltip для карточек
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>

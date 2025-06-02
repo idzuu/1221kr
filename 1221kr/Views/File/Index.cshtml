@@ -1,0 +1,40 @@
+﻿@model List<_1221kr.Models.UploadedFile>
+
+@using (Html.BeginForm("Upload", "File", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <input type="file" name="file" />
+    <input type="submit" value="Загрузить" />
+}
+
+<hr />
+
+<h2>Загруженные файлы</h2>
+@if (Model?.Any() != true)
+{
+    <p>Файлов пока нет.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя файла</th>
+                <th>Дата загрузки</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model)
+            {
+                <tr>
+                    <td>@file.Id</td>
+                    <td>@file.FileName</td>
+                    <td>
+                        @Html.ActionLink("Скачать", "Download", "File", new { id = file.Id }, new { @class = "btn btn-primary" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

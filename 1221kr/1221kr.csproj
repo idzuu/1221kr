@@ -298,6 +298,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ConsultationController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LawyerController.cs" />
     <Compile Include="Global.asax.cs">
@@ -307,13 +308,23 @@
     <Compile Include="Migrations\202505022210331_InitialCreate.Designer.cs">
       <DependentUpon>202505022210331_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202505301549549_AddedFileSizeColumn.cs" />
+    <Compile Include="Migrations\202505301549549_AddedFileSizeColumn.Designer.cs">
+      <DependentUpon>202505301549549_AddedFileSizeColumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202505301556425_InitialCreate1.cs" />
+    <Compile Include="Migrations\202505301556425_InitialCreate1.Designer.cs">
+      <DependentUpon>202505301556425_InitialCreate1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ConsultationDetailsViewModel.cs" />
     <Compile Include="Models\ConsultationType.cs" />
     <Compile Include="Models\ConsultationViewModel.cs" />
+    <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\Helpers.cs" />
     <Compile Include="Models\PasswordHasher.cs" />
+    <Compile Include="Models\UploadedFile.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\VideoConferenceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -379,10 +390,10 @@
     <Content Include="Views\Consultation\Details.cshtml" />
     <Content Include="Views\Consultation\BookConsultation.cshtml" />
     <Content Include="Views\Consultation\BookingConfirmation.cshtml" />
+    <Content Include="Views\File\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Documnet\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -414,6 +425,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202505022210331_InitialCreate.resx">
       <DependentUpon>202505022210331_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505301549549_AddedFileSizeColumn.resx">
+      <DependentUpon>202505301549549_AddedFileSizeColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505301556425_InitialCreate1.resx">
+      <DependentUpon>202505301556425_InitialCreate1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

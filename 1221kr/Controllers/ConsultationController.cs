@@ -113,57 +113,6 @@ namespace _1221kr.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult BookConsultation(_1221kr.Models.ConsultationBooking model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Создаем новый объект бронирования
-                    var booking = new _1221kr.Models.ConsultationBooking
-                    {
-                        ConsultationId = model.ConsultationId,
-                        ClientId = User.Identity.GetUserId(),
-                        SelectedDate = model.SelectedDate,
-                        Notes = model.Notes,
-                        BookingDate = DateTime.Now,
-                        Status = _1221kr.Models.BookingStatus.Pending
-                    };
-
-                    // Явное указание типа при добавлении
-                    _db.Set<_1221kr.Models.ConsultationBooking>().Add(booking);
-                    _db.SaveChanges();
-
-                    return RedirectToAction("BookingConfirmation", new { id = booking.Id });
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Ошибка при сохранении: " + ex.Message);
-                    // Логирование ошибки
-                    System.Diagnostics.Debug.WriteLine(ex.ToString());
-                }
-            }
-
-            // Повторная загрузка консультации для отображения формы
-            var consultation = _db.Consultations
-                .Include(c => c.Lawyer)
-                .FirstOrDefault(c => c.Id == model.ConsultationId);
-
-            if (consultation == null)
-            {
-                return HttpNotFound();
-            }
-
-            var viewModel = new ConsultationDetailsViewModel
-            {
-                Consultation = consultation,
-                BookingModel = model
-            };
-
-            return View("Details", viewModel);
-        }
         [HttpGet]
         public ActionResult BookConsultation(int consultationId)
         {
@@ -178,11 +127,67 @@ namespace _1221kr.Controllers
 
             var model = new ConsultationBooking
             {
-                ConsultationId = consultationId,
-                Consultation = consultation
+                Consultation = consultation,
+                ConsultationId = consultation.Id, 
+                MinDate = DateTime.Now.AddDays(1),
+                MaxDate = DateTime.Now.AddDays(14)
             };
 
             return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult BookConsultation(ConsultationBooking model)
+        {
+            // Всегда загружаем Consultation перед возвратом View
+            model.Consultation = _db.Consultations
+                .Include(c => c.Lawyer)
+                .FirstOrDefault(c => c.Id == model.ConsultationId);
+
+            if (model.Consultation == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                var existingBooking = _db.ConsultationBookings
+                    .Any(b => b.ConsultationId == model.ConsultationId &&
+                             b.SelectedDate == model.SelectedDate);
+
+                if (existingBooking)
+                {
+                    ModelState.AddModelError("SelectedDate", "Это время уже занято");
+                    return View(model);
+                }
+
+                var booking = new ConsultationBooking
+                {
+                    ConsultationId = model.ConsultationId,
+                    ClientId = User.Identity.GetUserId(),
+                    SelectedDate = model.SelectedDate,
+                    Notes = model.Notes,
+                    BookingDate = DateTime.Now,
+                    Status = BookingStatus.Confirmed
+                };
+
+                _db.ConsultationBookings.Add(booking);
+                _db.SaveChanges();
+
+                TempData["BookingSuccess"] = true;
+                return RedirectToAction("BookingConfirmation", new { id = booking.Id });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ошибка при бронировании: {ex}");
+                ModelState.AddModelError("", "Произошла ошибка при бронировании. Пожалуйста, попробуйте позже.");
+                return View(model);
+            }
         }
         [HttpGet]
         public ActionResult BookingConfirmation(int id)
@@ -199,6 +204,5 @@ namespace _1221kr.Controllers
 
             return View(booking);
         }
-
     }
 }

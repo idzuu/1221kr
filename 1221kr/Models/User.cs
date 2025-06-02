@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace _1221kr.Models
 {
-    // Основной класс Identity пользователя
+   
     public class ApplicationUser : IdentityUser
     {
         [Required]
@@ -22,7 +22,7 @@ namespace _1221kr.Models
         [Display(Name = "Фамилия")]
         public string LastName { get; set; }
 
-        // Дополнительные свойства для юристов
+      
         [Display(Name = "Специализация")]
         public string Specialization { get; set; }
 
@@ -47,7 +47,7 @@ namespace _1221kr.Models
         [Display(Name = "Дата регистрации")]
         public DateTime RegistrationDate { get; set; } = DateTime.Now;
 
-        // Навигационное свойство для анкет
+ 
         public virtual ICollection<LawyerQuestionnaire> Questionnaires { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -57,13 +57,13 @@ namespace _1221kr.Models
         }
     }
 
-    // Класс анкеты юриста
+
     public class LawyerQuestionnaire
     {
         public int Id { get; set; }
 
         [Required]
-        public string UserId { get; set; } // Связь с ApplicationUser
+        public string UserId { get; set; } 
 
         [Required]
         [Display(Name = "Тип анкеты")]
@@ -114,7 +114,7 @@ namespace _1221kr.Models
         public int DurationMinutes { get; set; }
 
         [Required]
-        public ConsultationType Type { get; set; } // Используем enum напрямую
+        public ConsultationType Type { get; set; } 
 
         public string AvailableDays { get; set; }
         public string WorkingHours { get; set; }
@@ -146,12 +146,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Consultation> Consultations { get; set; }
     public DbSet<ConsultationBooking> ConsultationBookings { get; set; }
     public DbSet<LawyerQuestionnaire> LawyerQuestionnaires { get; set; }
+    public DbSet<UploadedFile> UploadedFiles { get; set; }
 
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Настройка связи один-ко-многим
+
         modelBuilder.Entity<ApplicationUser>()
             .HasMany(u => u.Questionnaires)
             .WithRequired(q => q.User)
